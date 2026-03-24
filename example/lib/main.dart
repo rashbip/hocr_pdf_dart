@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hocr_pdf_dart/hocr_to_pdf.dart';
 import 'package:printing/printing.dart';
+import 'package:pdf/widgets.dart' as pw;
+import 'package:pdf/pdf.dart';
 
 void main() {
   runApp(const MyApp());
@@ -29,7 +31,21 @@ class _MyAppState extends State<MyApp> {
       // Load hOCR asset
       final hocrContent = await rootBundle.loadString('assets/out.hocr');
       
-      final pdf = await HocrToPdf.convert(hocrContent);
+      pw.Font? font;
+      try {
+        final fontData = await rootBundle.load('assets/Purno_Regular.ttf');
+        font = pw.Font.ttf(fontData);
+        debugPrint('Loaded Purno_Regular.ttf from assets');
+      } catch (e) {
+        debugPrint('Could not load font from assets: $e. Falling back to default.');
+        // If not found, you can optionally use Google Fonts as a second fallback:
+        // font = await PdfGoogleFonts.notoSerifBengali();
+      }
+      
+      final pdf = await HocrToPdf.convert(
+        hocrContent, 
+        font: font,
+      );
 
       setState(() {
         _pdfData = pdf;
