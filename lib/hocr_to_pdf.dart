@@ -9,7 +9,13 @@ class HocrToPdf {
   /// [backgroundColor] defaults to white.
   static Future<Uint8List> convert(String hocrString, {pw.Font? font, PdfColor backgroundColor = PdfColors.white}) async {
     final pdf = pw.Document();
-    final document = XmlDocument.parse(hocrString);
+    
+    // Ensure the XML is valid by wrapping it if it has multiple root elements
+    final wrappedHocr = hocrString.trim().startsWith('<html') || hocrString.trim().startsWith('<?xml')
+        ? hocrString
+        : '<root>$hocrString</root>';
+        
+    final document = XmlDocument.parse(wrappedHocr);
 
     final pages = document.findAllElements('div').where((e) => e.getAttribute('class') == 'ocr_page');
 

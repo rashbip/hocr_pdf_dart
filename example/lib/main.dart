@@ -18,6 +18,7 @@ class MyApp extends StatefulWidget {
 class _MyAppState extends State<MyApp> {
   Uint8List? _pdfData;
   bool _isLoading = false;
+  final GlobalKey<ScaffoldMessengerState> _messengerKey = GlobalKey<ScaffoldMessengerState>();
 
   Future<void> _convertHocr() async {
     setState(() {
@@ -28,9 +29,6 @@ class _MyAppState extends State<MyApp> {
       // Load hOCR asset
       final hocrContent = await rootBundle.loadString('assets/out.hocr');
       
-      // Convert to PDF
-      // Note: for Bengali support, we might need a custom font.
-      // But let's first see the basic output.
       final pdf = await HocrToPdf.convert(hocrContent);
 
       setState(() {
@@ -38,7 +36,7 @@ class _MyAppState extends State<MyApp> {
       });
     } catch (e) {
       debugPrint('Error converting: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
+      _messengerKey.currentState?.showSnackBar(
         SnackBar(content: Text('Error: $e')),
       );
     } finally {
@@ -51,6 +49,7 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+      scaffoldMessengerKey: _messengerKey,
       theme: ThemeData(useMaterial3: true),
       home: Scaffold(
         appBar: AppBar(
