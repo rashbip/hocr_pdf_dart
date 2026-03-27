@@ -31,7 +31,9 @@ abstract class HocrElement {
 
 class HocrWord extends HocrElement {
   final String text;
-  HocrWord(String id, HocrBbox bbox, this.text) : super(id, bbox);
+  final String? language;
+  
+  HocrWord(String id, HocrBbox bbox, this.text, {this.language}) : super(id, bbox);
 }
 
 class HocrLine extends HocrElement {

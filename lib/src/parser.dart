@@ -1,12 +1,9 @@
 import 'package:xml/xml.dart';
 import 'models.dart';
-import 'shapers/shaper.dart';
-import 'shapers/shaper_factory.dart';
 
 class HocrParser {
   /// Parses hOCR content into a list of [HocrPage] objects.
-  /// [shaper] can be provided manually, or [language] can be used to auto-select one.
-  static List<HocrPage> parse(String hocrContent, {HocrShaper? shaper, String? language}) {
+  static List<HocrPage> parse(String hocrContent) {
     // 1. Pre-process document
     final wrappedHocr = hocrContent.trim().startsWith('<html') || hocrContent.trim().startsWith('<?xml')
         ? hocrContent
@@ -14,7 +11,6 @@ class HocrParser {
     final document = XmlDocument.parse(wrappedHocr);
 
     // 2. Select language shaper
-    final activeShaper = shaper ?? HocrShaperFactory.getShaperForLanguage(language);
 
     final pages = <HocrPage>[];
     for (var pageElement in document.findAllElements('div').where((e) => e.getAttribute('class') == 'ocr_page')) {
@@ -22,8 +18,7 @@ class HocrParser {
       final bbox = HocrBbox.fromTitle(bboxStr);
       if (bbox == null) continue;
 
-      final pageLang = pageElement.getAttribute('lang') ?? language;
-      final pageShaper = activeShaper ?? HocrShaperFactory.getShaperForLanguage(pageLang);
+      final pageLang = pageElement.getAttribute('lang');
 
       final lines = <HocrLine>[];
       for (var lineElement in pageElement.findAllElements('span').where((e) => e.getAttribute('class') == 'ocr_line')) {
@@ -38,10 +33,9 @@ class HocrParser {
           final rawText = wordElement.innerText.trim();
           if (rawText.isEmpty) continue;
 
-          // Apply language shaper if available
-          final text = pageShaper != null ? pageShaper.shape(rawText) : rawText;
+          final text = rawText;
 
-          words.add(HocrWord(wordElement.getAttribute('id') ?? '', wordBbox, text));
+          words.add(HocrWord(wordElement.getAttribute('id') ?? '', wordBbox, text, language: pageLang));
         }
 
         lines.add(HocrLine(lineElement.getAttribute('id') ?? '', lineBbox, words));
