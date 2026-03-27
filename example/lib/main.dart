@@ -31,18 +31,17 @@ class _MyAppState extends State<MyApp> {
       
       pw.Font? font;
       try {
-        final fontData = await rootBundle.load('assets/Purno_Regular.ttf');
+        final fontData = await rootBundle.load('assets/kalpurush.ttf');
         font = pw.Font.ttf(fontData);
-        debugPrint('Loaded Purno_Regular.ttf from assets');
+        debugPrint('Loaded kalpurush.ttf (ANSI-ready) from assets');
       } catch (e) {
-        debugPrint('Could not load font from assets: $e. Falling back to default.');
-        // If not found, you can optionally use Google Fonts as a second fallback:
-        // font = await PdfGoogleFonts.notoSerifBengali();
+        debugPrint('Could not load kalpurush.ttf from assets: $e');
       }
       
       final pdf = await HocrToPdf.convert(
         hocrContent, 
         font: font,
+        language: 'bangla', // This will auto-select BanglaShaper
       );
 
       setState(() {
