@@ -31,11 +31,11 @@ class _MyAppState extends State<MyApp> {
       
       pw.Font? font;
       try {
-        final fontData = await rootBundle.load('assets/kalpurush.ttf');
+        final fontData = await rootBundle.load('assets/Purno_Regular.ttf');
         font = pw.Font.ttf(fontData);
-        debugPrint('Loaded kalpurush.ttf (ANSI-ready) from assets');
+        debugPrint('Loaded Purno_Regular.ttf from assets');
       } catch (e) {
-        debugPrint('Could not load kalpurush.ttf from assets: $e');
+        debugPrint('Could not load Purno_Regular.ttf from assets: $e');
       }
       
       final pdf = await HocrToPdf.convert(

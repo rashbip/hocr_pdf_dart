@@ -3,11 +3,14 @@ import 'shaper.dart';
 class BanglaShaper extends HocrShaper {
   final bool useAnsiMapping;
 
-  BanglaShaper({this.useAnsiMapping = true});
+  BanglaShaper({this.useAnsiMapping = false});
 
   @override
   String shape(String text) {
     if (text.isEmpty) return text;
+    
+    // Quick out: don't touch words that don't contain any Bengali characters
+    if (!_isBanglaCharacter(text)) return text;
 
     // Standardize characters early
     String processed = text
