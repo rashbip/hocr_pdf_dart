@@ -1,5 +1,6 @@
 import 'package:xml/xml.dart';
 import 'models.dart';
+import 'shaper.dart';
 
 class HocrParser {
   static List<HocrPage> parse(String hocrContent) {
@@ -24,8 +25,9 @@ class HocrParser {
           final wordBbox = HocrBbox.fromTitle(wordElement.getAttribute('title') ?? '');
           if (wordBbox == null) continue;
 
-          final text = wordElement.innerText.trim();
-          if (text.isEmpty) continue;
+          final rawText = wordElement.innerText.trim();
+          if (rawText.isEmpty) continue;
+          final text = HocrShaper.shape(rawText);
 
           words.add(HocrWord(wordElement.getAttribute('id') ?? '', wordBbox, text));
         }
