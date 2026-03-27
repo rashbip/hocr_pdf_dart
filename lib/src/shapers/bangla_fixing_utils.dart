@@ -42,6 +42,7 @@ class FixingUtils {
     final effectiveGeneralStyle = style ??
         pw.TextStyle(
           font: generalFont,
+          fontFallback: [banglaFont ?? BanglaFontManager().defaultFont],
           fontSize: fontSize,
           fontWeight: fontWeight,
           color: color,
@@ -50,6 +51,7 @@ class FixingUtils {
     var effectiveBanglaStyle = banglaStyle ??
         pw.TextStyle(
           font: banglaFont ?? BanglaFontManager().defaultFont,
+          fontFallback: generalFont != null ? [generalFont] : [],
           fontSize: fontSize,
           fontWeight: fontWeight,
           color: color,

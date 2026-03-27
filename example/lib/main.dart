@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:hocr_pdf_dart/hocr_to_pdf.dart';
-import 'package:printing/printing.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:pdf/widgets.dart' as pw;
@@ -37,7 +36,6 @@ class MainScreen extends StatefulWidget {
 }
 
 class _MainScreenState extends State<MainScreen> {
-  Uint8List? _pdfData;
   bool _isLoading = false;
   Uint8List? _customFontBytes;
   String? _customFontName;
@@ -90,7 +88,7 @@ class _MainScreenState extends State<MainScreen> {
       await file.writeAsBytes(pdfData);
       await OpenFilex.open(file.path);
 
-      setState(() => _pdfData = pdfData);
+      // setState(() => _pdfData = pdfData);
     } catch (e) {
       debugPrint('Error: $e');
     } finally {
@@ -122,45 +120,29 @@ class _MainScreenState extends State<MainScreen> {
                       label: const Text('Change Font'),
                     ),
                     const SizedBox(height: 12),
-                    ElevatedButton.icon(
+                    ElevatedButton(
                       onPressed: _convertHocr,
-                      icon: const Icon(Icons.auto_fix_high),
-                      label: const Text('Convert hOCR to PDF'),
+                      child: const Text('Convert hOCR to PDF'),
                     ),
-                    if (_pdfData != null) ...[
-                      const SizedBox(height: 12),
-                      TextButton.icon(
-                        onPressed: () => Printing.sharePdf(bytes: _pdfData!, filename: 'output.pdf'),
-                        icon: const Icon(Icons.share),
-                        label: const Text('Share Result'),
-                      ),
-                    ],
-                    const SizedBox(height: 48),
-                    const Divider(),
-                    const Padding(
-                      padding: EdgeInsets.symmetric(vertical: 8),
-                      child: Text('Official Plugin Test', style: TextStyle(fontWeight: FontWeight.bold, color: Colors.grey)),
-                    ),
-                    OutlinedButton.icon(
+                    const SizedBox(height: 12),
+                    ElevatedButton(
                       onPressed: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (_) => const BanglaPdfTestScreen()),
                         );
                       },
-                      icon: const Icon(Icons.verified),
-                      label: const Text('Jump to Official Test Screen'),
+                      child: const Text('Test BanglaText Widget'),
                     ),
                     const SizedBox(height: 12),
-                    OutlinedButton.icon(
+                    ElevatedButton(
                       onPressed: () {
                         Navigator.push(
                           context,
                           MaterialPageRoute(builder: (_) => const HocrBanglaTestScreen()),
                         );
                       },
-                      icon: const Icon(Icons.auto_awesome),
-                      label: const Text('Jump to Hocr Bangla Test Screen'),
+                      child: const Text('Test Bengali hOCR Renderer'),
                     ),
                   ],
                 ),

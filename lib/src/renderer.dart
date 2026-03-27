@@ -44,16 +44,25 @@ class HocrPdfRenderer {
         final left = (word.bbox.x1 - page.bbox.x1).toDouble();
         final width = word.bbox.width;
         
+        final hasBangla = word.text.contains(RegExp(r'[\u0980-\u09FF]'));
+        
         final lang = word.language ?? '';
         if (!shaperCache.containsKey(lang)) {
           shaperCache[lang] = HocrShaperFactory.getShaperForLanguage(lang);
         }
-        final shaper = shaperCache[lang];
-        final text = shaper != null ? shaper.shape(word.text) : word.text;
         
-        // Special font handling for Bengali
+        // If it's not tagged as Bangla but contains Bangla characters, use BanglaShaper
+        var shaper = shaperCache[lang];
+        if (shaper == null && hasBangla) {
+          shaper = HocrShaperFactory.getShaperForLanguage('ben');
+        }
+        
+        final shapedText = shaper != null ? shaper.shape(word.text) : word.text;
+        
+        // Use Bangla font if it contains Bangla characters or is tagged as such
         final isBangla = lang.toLowerCase().contains('ben') || 
-                         lang.toLowerCase().contains('ban');
+                         lang.toLowerCase().contains('ban') ||
+                         hasBangla;
 
         children.add(
           pw.Positioned(
@@ -66,9 +75,10 @@ class HocrPdfRenderer {
                 fit: pw.BoxFit.contain,
                 alignment: pw.Alignment.centerLeft,
                 child: pw.Text(
-                  text,
+                  shapedText,
                   style: pw.TextStyle(
                     font: isBangla ? defaultBanglaFont : font,
+                    fontFallback: isBangla ? (font != null ? [font] : []) : [defaultBanglaFont],
                     fontSize: lineHeight * 0.8,
                     color: PdfColors.black,
                   ),
