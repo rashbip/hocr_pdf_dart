@@ -6,8 +6,6 @@ import 'package:path_provider/path_provider.dart';
 import 'package:open_filex/open_filex.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:file_picker/file_picker.dart';
-import 'bangla_pdf_test_screen.dart';
-import 'hocr_bangla_test_screen.dart';
 
 void main() {
   runApp(const MyApp());
@@ -123,26 +121,6 @@ class _MainScreenState extends State<MainScreen> {
                     ElevatedButton(
                       onPressed: _convertHocr,
                       child: const Text('Convert hOCR to PDF'),
-                    ),
-                    const SizedBox(height: 12),
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (_) => const BanglaPdfTestScreen()),
-                        );
-                      },
-                      child: const Text('Test BanglaText Widget'),
-                    ),
-                    const SizedBox(height: 12),
-                    ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (_) => const HocrBanglaTestScreen()),
-                        );
-                      },
-                      child: const Text('Test Bengali hOCR Renderer'),
                     ),
                   ],
                 ),
